@@ -12,6 +12,16 @@ var is_idling = false
 var is_dragging = false
 var drag_offset = Vector2()
 
+# personaliyy
+var happiness = 0
+var bored_count = 0
+
+# voices
+var voices = DisplayServer.tts_get_voices_for_language("en")
+var phrases_happy = ["Happy to see you, my friend!", "How is your day going?", "What's up?"]
+var phrases_angry = ["Finally!", "Where were you?", "I was so bored!"]
+var phrases_mid = ["Nice to see you!", "Thanks!", "Hello there!"]
+
 @onready var animated_sprite = $AnimatedSprite2D
 @onready var area = $Area2D
 
@@ -31,6 +41,11 @@ func _physics_process(delta: float) -> void:
 		var mouse_pos = Vector2(DisplayServer.mouse_get_position())
 		var new_win_pos = mouse_pos - drag_offset
 		DisplayServer.window_set_position(Vector2i(new_win_pos))
+		speed = randi_range(700, 1000) # set a random speed
+		if is_idling:
+			is_idling = false
+			animated_sprite.play("walk")
+			$CPUParticles2D.emitting = false
 		return
 	
 	if is_idling:
@@ -39,6 +54,7 @@ func _physics_process(delta: float) -> void:
 			is_idling = false
 			speed = randi_range(700, 1000) # set a random speed
 			animated_sprite.play("walk")
+			$CPUParticles2D.emitting = false
 		return
 			
 	
@@ -46,9 +62,11 @@ func _physics_process(delta: float) -> void:
 	window_position.x = clamp(window_position.x,0,screen_size.x - window_size.x)
 	window_position.y = clamp(window_position.y,0,screen_size.y - window_size.y)
 	speed -= randi_range(0, 2) # slow down a random amount
+	print("Happy:", happiness)
+	print("Bored:", bored_count)
 	if speed < 0:
 		speed = 0
-	print(speed)
+	#print(speed)
 	window_position += direction * speed * delta 
 	#print(window_position)
 	DisplayServer.window_set_position(Vector2i(window_position))
@@ -62,21 +80,40 @@ func _physics_process(delta: float) -> void:
 		
 	maybe_idle()
 	
+# is the pet idling
 func maybe_idle():
 	if speed < 5 and randf() < 0.3:
 		is_idling = true
 		idle_timer = randf_range(3.0, 5.0)
 		animated_sprite.play("rest")
-		
+		bored_count += 1
+		if bored_count > 3:
+			happiness -= 1
 			
+		
+		$CPUParticles2D.emitting = true
+		
 func _on_area_input(_viewport, event, _shape_idx):
 	#print("input received: ", event)
 	# drag the pet if it is pressed and dragged by the mouse
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
+			bored_count = 0
+			if happiness < 10:
+				happiness += 1
+			if happiness >= 5:
+				DisplayServer.tts_speak(phrases_happy.pick_random(), voices[0],50,2,0)
+			elif happiness < 1:
+				DisplayServer.tts_speak(phrases_angry.pick_random(), voices[0],50,2,0)
+			else:
+				DisplayServer.tts_speak(phrases_mid.pick_random(), voices[0],50,1.2,0)
 			is_dragging = true
 			var mouse_pos = Vector2(DisplayServer.mouse_get_position())
 			var win_pos = Vector2(DisplayServer.window_get_position())
 			drag_offset = mouse_pos - win_pos
+			
+				
 		else:
 			is_dragging = false
+
+	

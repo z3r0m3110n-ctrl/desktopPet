@@ -17,6 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://cay5okgyitsvt" path="res://images/sleep-6.png" id="9_kpsh6"]
 [ext_resource type="Texture2D" uid="uid://rhemsetke25s" path="res://images/sleep-7.png" id="10_3qdnn"]
 [ext_resource type="Texture2D" uid="uid://b458287ggny84" path="res://images/sleep-8.png" id="11_s7pqw"]
+[ext_resource type="Texture2D" uid="uid://0o1krbovysgv" path="res://images/z.png" id="18_auxaw"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kpsh6"]
 atlas = ExtResource("1_iwpey")
@@ -204,3 +205,18 @@ scale = Vector2(200, 200)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1491512083]
 position = Vector2(0.49249995, 0.49499995)
 shape = SubResource("RectangleShape2D_d7q6v")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="." unique_id=365926331]
+position = Vector2(10, 20)
+emitting = false
+amount = 5
+texture = ExtResource("18_auxaw")
+explosiveness = 0.26
+randomness = 0.33
+lifetime_randomness = 0.25
+tangential_accel_max = 1.0
+scale_amount_min = 2.0
+scale_amount_max = 2.0
+
+[node name="Timer" type="Timer" parent="." unique_id=1852215338]
+wait_time = 5.0
