@@ -1,5 +1,5 @@
 extends Node2D
-var speed = 300
+var speed = 600
 var direction = Vector2(1,0)
 var screen_size = Vector2()
 var window_size = Vector2(200, 200)
@@ -37,7 +37,7 @@ func _physics_process(delta: float) -> void:
 		idle_timer -= delta
 		if idle_timer <= 0:
 			is_idling = false
-			speed = 300
+			speed = randi_range(700, 1000) # set a random speed
 			animated_sprite.play("walk")
 		return
 			
@@ -45,6 +45,10 @@ func _physics_process(delta: float) -> void:
 	var window_position =  Vector2(DisplayServer.window_get_position())
 	window_position.x = clamp(window_position.x,0,screen_size.x - window_size.x)
 	window_position.y = clamp(window_position.y,0,screen_size.y - window_size.y)
+	speed -= randi_range(0, 2) # slow down a random amount
+	if speed < 0:
+		speed = 0
+	print(speed)
 	window_position += direction * speed * delta 
 	#print(window_position)
 	DisplayServer.window_set_position(Vector2i(window_position))
@@ -52,19 +56,22 @@ func _physics_process(delta: float) -> void:
 	if window_position.x <= 0 or window_position.x >= screen_size.x - window_size.x:
 		direction.x *= -1
 		animated_sprite.flip_h = !animated_sprite.flip_h
-		maybe_idle()
+		
 	if window_position.y <= 0 or window_position.y >= screen_size.y - window_size.y:
 		direction.y *= -1
-		maybe_idle()
 		
+	maybe_idle()
+	
 func maybe_idle():
-	if randf() < 0.3:
+	if speed < 5 and randf() < 0.3:
 		is_idling = true
-		idle_timer = randf_range(1.0, 3.0)
+		idle_timer = randf_range(3.0, 5.0)
 		animated_sprite.play("rest")
+		
 			
 func _on_area_input(_viewport, event, _shape_idx):
 	#print("input received: ", event)
+	# drag the pet if it is pressed and dragged by the mouse
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			is_dragging = true
