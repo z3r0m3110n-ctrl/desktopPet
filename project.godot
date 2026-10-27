@@ -21,8 +21,8 @@ general/text_to_speech=true
 
 [display]
 
-window/size/viewport_width=200
-window/size/viewport_height=200
+window/size/viewport_width=400
+window/size/viewport_height=300
 window/size/borderless=true
 window/size/always_on_top=true
 window/size/transparent=true

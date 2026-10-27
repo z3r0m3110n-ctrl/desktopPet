@@ -188,11 +188,18 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_d7q6v"]
 size = Vector2(0.985, 0.99999994)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_auxaw"]
+bg_color = Color(0.076688, 0.114675455, 0.12749103, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [node name="Node2D" type="Node2D" unique_id=782382023]
 script = ExtResource("1_g4qto")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=212690999]
-position = Vector2(98.49999, 99.00001)
+position = Vector2(104, 198)
 scale = Vector2(1, 1.005)
 sprite_frames = SubResource("SpriteFrames_xkoum")
 animation = &"rest"
@@ -203,7 +210,7 @@ frame_progress = 1.0
 scale = Vector2(200, 200)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1491512083]
-position = Vector2(0.49249995, 0.49499995)
+position = Vector2(0.5250001, 0.985)
 shape = SubResource("RectangleShape2D_d7q6v")
 
 [node name="CPUParticles2D" type="CPUParticles2D" parent="." unique_id=365926331]
@@ -218,5 +225,15 @@ tangential_accel_max = 1.0
 scale_amount_min = 2.0
 scale_amount_max = 2.0
 
-[node name="Timer" type="Timer" parent="." unique_id=1852215338]
-wait_time = 5.0
+[node name="SpeechBubble" type="PanelContainer" parent="." unique_id=1943706797]
+offset_right = 400.0
+offset_bottom = 97.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_auxaw")
+
+[node name="SpeechText" type="RichTextLabel" parent="SpeechBubble" unique_id=2927779]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 30
+text = "Hello"
+scroll_active = false
+
+[node name="SpeechTimer" type="Timer" parent="." unique_id=1497163212]

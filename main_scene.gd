@@ -1,3 +1,4 @@
+# desktop pet main scene
 extends Node2D
 var speed = 600
 var direction = Vector2(1,0)
@@ -12,29 +13,39 @@ var is_idling = false
 var is_dragging = false
 var drag_offset = Vector2()
 
-# personaliyy
+# personality
 var happiness = 0
 var bored_count = 0
 
-# voices
-var voices = DisplayServer.tts_get_voices_for_language("en")
+# speech
+#var voices = DisplayServer.tts_get_voices_for_language("en")
 var phrases_happy = ["Happy to see you, my friend!", "How is your day going?", "What's up?"]
-var phrases_angry = ["Finally!", "Where were you?", "I was so bored!"]
-var phrases_mid = ["Nice to see you!", "Thanks!", "Hello there!"]
+var phrases_angry = ["Finally!", "Where were you?", "I was so bored!", "What were you doing?", "You were gone for so long!"]
+var phrases_mid = ["Nice to see you!", "Good day!", "Hello there!"]
+var phrases_tired = ["I'm tired...", "I feel sleepy...", "Nap time..."]
 
 @onready var animated_sprite = $AnimatedSprite2D
 @onready var area = $Area2D
+@onready var speech_bubble = $SpeechBubble
+@onready var speech_text = $SpeechBubble/SpeechText
+@onready var speech_timer = $SpeechTimer
 
 func _ready():
-	screen_size = Vector2(DisplayServer.screen_get_size())
-	animated_sprite.play("walk")
+	speech_bubble.hide()
+	speech_timer.timeout.connect(_on_speech_timer_timeout)
 	
+	animated_sprite.play("walk")
 	area.input_pickable = true
 	area.input_event.connect(_on_area_input)
 	get_viewport().physics_object_picking = true
 
 	screen_size = Vector2(DisplayServer.screen_get_size())
+	var usable = DisplayServer.screen_get_usable_rect()
+	print(screen_size)
+	DisplayServer.window_set_position(Vector2i(0, usable.end.y-window_size.y-100))
+	
 	animated_sprite.play("walk")
+	
 	
 func _physics_process(delta: float) -> void:
 	if is_dragging:
@@ -62,8 +73,8 @@ func _physics_process(delta: float) -> void:
 	window_position.x = clamp(window_position.x,0,screen_size.x - window_size.x)
 	window_position.y = clamp(window_position.y,0,screen_size.y - window_size.y)
 	speed -= randi_range(0, 2) # slow down a random amount
-	print("Happy:", happiness)
-	print("Bored:", bored_count)
+	#print("Happy:", happiness)
+	#print("Bored:", bored_count)
 	if speed < 0:
 		speed = 0
 	#print(speed)
@@ -80,11 +91,14 @@ func _physics_process(delta: float) -> void:
 		
 	maybe_idle()
 	
-# is the pet idling
+# check if the pet idling
 func maybe_idle():
 	if speed < 5 and randf() < 0.3:
 		is_idling = true
-		idle_timer = randf_range(3.0, 5.0)
+		idle_timer = randf_range(5.0, 20.0)
+		speech_text.text = phrases_tired.pick_random()
+		speech_bubble.show()
+		speech_timer.start(3)
 		animated_sprite.play("rest")
 		bored_count += 1
 		if bored_count > 3:
@@ -102,11 +116,17 @@ func _on_area_input(_viewport, event, _shape_idx):
 			if happiness < 10:
 				happiness += 1
 			if happiness >= 5:
-				DisplayServer.tts_speak(phrases_happy.pick_random(), voices[0],50,2,0)
+				speech_text.text = phrases_happy.pick_random()
+				speech_bubble.show()
+				speech_timer.start(3)
 			elif happiness < 1:
-				DisplayServer.tts_speak(phrases_angry.pick_random(), voices[0],50,2,0)
+				speech_text.text = phrases_angry.pick_random()
+				speech_bubble.show()
+				speech_timer.start(3)
 			else:
-				DisplayServer.tts_speak(phrases_mid.pick_random(), voices[0],50,1.2,0)
+				speech_text.text = phrases_mid.pick_random()
+				speech_bubble.show()
+				speech_timer.start(3)
 			is_dragging = true
 			var mouse_pos = Vector2(DisplayServer.mouse_get_position())
 			var win_pos = Vector2(DisplayServer.window_get_position())
@@ -116,4 +136,5 @@ func _on_area_input(_viewport, event, _shape_idx):
 		else:
 			is_dragging = false
 
-	
+func _on_speech_timer_timeout() -> void:
+	speech_bubble.hide()
