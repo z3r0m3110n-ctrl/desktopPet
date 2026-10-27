@@ -16,12 +16,12 @@ DesktopPet was developed for Windows and is my first ever project made with the 
 
 ## Play the Game
 
-**Windows Demo:** [Download DesktopPet](https://github.com/USERNAME/REPOSITORY/releases/latest)
+**Windows Demo:** [Download DesktopPet](https://github.com/z3r0m3110n-ctrl/desktopPet/releases/latest)
 
 ### How to Play
-1. Download the ZIP file.
-2. Extract the ZIP.
-3. Run 'DesktopPet.exe.
+1. Go to the [latest release](https://github.com/z3r0m3110n-ctrl/desktopPet/releases/latest) page
+2. Download the Windows .exe file from the release assets.
+3. Run 'DesktopPet.exe' to start the game.
 
 ### Controls
 Use the mouse to click your pet and drag him around the screen.
